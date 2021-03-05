@@ -13,7 +13,21 @@
         <link rel="stylesheet" href="./Assets/style.css">
     </head>
     <body>
-        <button onclick="start()">Click me</button>
+        <p id="timer"></p>
+        <div>
+            <h1 id="question">Code Quiz</h1>
+            <p id="text">Click the start button to start the quiz</p>
+            <ol id="answers">
+                <li id="firstAnswer">HTML</li>
+                <li id="secondAnswer"></li>
+                <li id="thirdAnswer"></li>
+                <li id="fourthAnswer"></li>
+            </ol>
+            <form></form>
+        </div>
+        <div id="hideBtn">
+            <button onclick="start()">Start</button>
+        </div>
         <!--[if lt IE 7]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="#">upgrade your browser</a> to improve your experience.</p>
         <![endif]-->
