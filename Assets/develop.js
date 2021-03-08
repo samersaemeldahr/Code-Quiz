@@ -51,10 +51,13 @@ document.getElementById("answers").style.display = "none";
 function start() {
   // event.preventDefault();
   // start timer i++,
+  timerId = setInterval(clock, 1000);
   question.style.fontSize = "24px";
   document.getElementById("text").style.display = "none";
   hideBtn.style.display = "none";
   answers.style.display = "inherit";
+
+  
   
   nextQuestion();
 }; 
@@ -64,7 +67,7 @@ var time = questions.length * 20;
 function nextQuestion() {
     var currentQuestion = questions[currentQuestionIndex];
     question.textContent = currentQuestion.question;
-  
+    
     // clear out any old question choices
     answers.innerHTML = "";
     currentQuestion.answers.forEach(function(choice, i) {
@@ -89,7 +92,7 @@ function questionClick() {
     // check if user guessed wrong
     if (this.value !== questions[currentQuestionIndex].correctAnswer) {
       // penalize time
-      time -= 15;
+      time -= 20;
   
       if (time < 0) {
         time = 0;
@@ -120,7 +123,7 @@ function questionClick() {
     }
   }
 
-  function quizEnd() {
+function quizEnd() {
     // stop timer
     clearInterval(timerId);
   
@@ -134,8 +137,23 @@ function questionClick() {
   
     // hide questions section
     questions.setAttribute("class", "hide");
-  }
+}
+
+function clock() {
+    // update time
+    time--;
+    timer.textContent = time;
+  
+    // check if user ran out of time
+    if (time <= 0) {
+      quizEnd();
+    }
+}
+
+
 /*
+
+
 
 WHEN I answer a question
 THEN I am presented with another question
