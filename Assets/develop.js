@@ -16,6 +16,7 @@ var timer = document.getElementById("timer");
 var question = document.getElementById("question");
 var answers = document.getElementById("answers");
 var result = document.getElementById("result");
+var endScreen = document.getElementById("end");
 
 var shuffledQuestions;
 var currentQuestionIndex = 0;
@@ -46,7 +47,8 @@ var questions = [
     },
 ];
 
-document.getElementById("answers").style.display = "none";
+answers.style.display = "none";
+endScreen.style.display = "none";
 
 function start() {
   // event.preventDefault();
@@ -117,26 +119,27 @@ function questionClick() {
   
     // time checker
     if (currentQuestionIndex === questions.length) {
-      quizEnd();
+      endQuiz();
     } else {
       nextQuestion();
     }
   }
 
-function quizEnd() {
+function endQuiz() {
     // stop timer
     clearInterval(timerId);
+
+    // hide questions and result sections
+    question.style.display = "none";
+    answers.style.display = "none";
+    result.style.display = "none";
   
     // show end screen
-    //var endScreenEl = document.getElementById("end-screen");
-    //endScreenEl.removeAttribute("class");
+    endScreen.style.display = "inherit";
   
     // show final score
-    //var finalScoreEl = document.getElementById("final-score");
-    //finalScoreEl.textContent = time;
-  
-    // hide questions section
-    questions.setAttribute("class", "hide");
+    var finalScore = document.getElementById("final-score");
+    finalScore.textContent = time;
 }
 
 function clock() {
@@ -146,9 +149,10 @@ function clock() {
   
     // check if user ran out of time
     if (time <= 0) {
-      quizEnd();
+       endQuiz();
     }
 }
+
 
 
 /*
