@@ -1,15 +1,3 @@
-/*
-
-GIVEN I am taking a code quiz
-
-WHEN I click the start button
-THEN a timer starts and I am presented with a question
-
-*/
-
-
-
-
 var startBtn = document.getElementById("start");
 var hideBtn = document.getElementById("hideBtn");
 var timer = document.getElementById("timer");
@@ -17,12 +5,16 @@ var question = document.getElementById("question");
 var answers = document.getElementById("answers");
 var result = document.getElementById("result");
 var endScreen = document.getElementById("end");
+var submitBtn = document.querySelector("#submit");
+var initialsEl = document.querySelector("#initials");
+var restartBtn = document.querySelector("#restart");
+var highscoresElement = document.querySelector(".highscoresElement")
+var scores = document.getElementById("scores");
 
 var shuffledQuestions;
 var currentQuestionIndex = 0;
 var timerCount = 0;
 var timerId;
-
 
 var questions = [
     {
@@ -49,17 +41,15 @@ var questions = [
 
 answers.style.display = "none";
 endScreen.style.display = "none";
+highscoresElement.style.display = "none";
 
 function start() {
-  // event.preventDefault();
-  // start timer i++,
   timerId = setInterval(clock, 1000);
+  
   question.style.fontSize = "24px";
   document.getElementById("text").style.display = "none";
   hideBtn.style.display = "none";
   answers.style.display = "inherit";
-
-  
   
   nextQuestion();
 }; 
@@ -70,28 +60,24 @@ function nextQuestion() {
     var currentQuestion = questions[currentQuestionIndex];
     question.textContent = currentQuestion.question;
     
-    // clear out any old question choices
     answers.innerHTML = "";
-    currentQuestion.answers.forEach(function(choice, i) {
-        // create new button for each choice
-        var choiceNode = document.createElement("button");
-        choiceNode.setAttribute("class", "choice");
-        choiceNode.setAttribute("value", choice);
+    currentQuestion.answers.forEach(function(answer) {
+        // Add buttons to answers
+        var answersBtn = document.createElement("button");
+        answersBtn.setAttribute("class", "answer");
+        answersBtn.setAttribute("value", answer);
     
-        choiceNode.textContent = i + 1 + ". " + choice;
+        answersBtn.textContent = answer;
     
-        // attach click event listener to each choice
-        choiceNode.onclick = questionClick;
-    
-        // display on the page
-        answers.appendChild(choiceNode);
-      });
+        answers.appendChild(answersBtn);
+
+        // Add click to answers
+        answersBtn.onclick = questionClick;
+    });
 }
 
-
-
 function questionClick() {
-    // check if user guessed wrong
+    // Check correct answer
     if (this.value !== questions[currentQuestionIndex].correctAnswer) {
       // penalize time
       time -= 20;
@@ -99,8 +85,11 @@ function questionClick() {
       if (time < 0) {
         time = 0;
       }
-      // display new time on page
+      
+      // Display time
       timer.textContent = time;
+
+      // Display result
       result.textContent = "Incorrect!";
       result.style.color = "red";
     } else {
@@ -108,16 +97,15 @@ function questionClick() {
       result.style.color = "green";
     }
   
-    // flash right/wrong feedback
     result.setAttribute("class", "feedback");
     setTimeout(function() {
       result.setAttribute("class", "feedback hide");
     }, 1000);
   
-    // next question
+    // Call next question
     currentQuestionIndex++;
   
-    // time checker
+    // Check time
     if (currentQuestionIndex === questions.length) {
       endQuiz();
     } else {
@@ -126,63 +114,97 @@ function questionClick() {
   }
 
 function endQuiz() {
-    // stop timer
+    // Clear timer
     clearInterval(timerId);
 
-    // hide questions and result sections
+    // Display highscores
+    highscoresElement.style.display = "block";
+
+    // Hide questions and result sections
     question.style.display = "none";
     answers.style.display = "none";
     result.style.display = "none";
   
-    // show end screen
+    // Display end screen
     endScreen.style.display = "inherit";
   
-    // show final score
+    // Display final score
     var finalScore = document.getElementById("final-score");
     finalScore.textContent = time;
 }
 
 function clock() {
-    // update time
+    // Update time
     time--;
     timer.textContent = time;
   
-    // check if user ran out of time
+    // Check time
     if (time <= 0) {
        endQuiz();
     }
 }
 
+function saveHighscore() {
+    // Get value of
+    var initials = initialsEl.value;
+  
+    if (initials !== "") {
+      // Get scores from local storage
+      var highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
+  
+      // Add score object
+      var newScore = {
+        score: time,
+        initials: initials,
+      };
+  
+      // Save to local storage
+      highscores.push(newScore);
+      window.localStorage.setItem("highscores", JSON.stringify(highscores));
 
-
-/*
-
-
-
-WHEN I answer a question
-THEN I am presented with another question
-
-var questions = [[What's JS?], [What's concat?], [What's +=?], [What does === means?]]
-var answers = 
-
-innerHTML
-
-function answer() {
-    if (answer1 || answer2 || answer3 || answer4) {
-        go to function next question
+      // Display scores
+      printHighscores();
     }
-}
-
-WHEN I answer a question incorrectly
-THEN time is subtracted from the clock
+  }
 
 
+  function printHighscores() {
+    var highscores = JSON.parse(window.localStorage.getItem("highscores")) || [];
+  
+    // High score up
+    highscores.sort(function(a, b) {
+      return b.score - a.score;
+    });
+  
+    highscores.forEach(function(score) {
+      // Creat highscore list
+      var liTag = document.createElement("li");
+      liTag.textContent = score.initials + " - " + score.score;
+  
+      // Display highscores
+      var olEl = document.getElementById("highscores");
+      olEl.appendChild(liTag);
+    });
+  }
+  
+  function clearHighscores() {
+    window.localStorage.removeItem("highscores");
+    window.location.reload();
+  }
 
-WHEN all questions are answered or the timer reaches 0
-THEN the game = over
+  function showHighscores() {
+      scores.textContent = "Hide Highscores";
 
-WHEN the game = over
-THEN I can save my initials and my score
-
-
-*/
+      if (highscoresElement.style.display === "none") {
+        highscoresElement.style.display = "block";
+      } else {
+        highscoresElement.style.display = "none";
+        scores.textContent = "View Highscores";
+      }
+  }
+  
+  // Clear highscores click
+  document.getElementById("clear").onclick = clearHighscores;
+  
+  // Submit name
+  submitBtn.onclick = saveHighscore;
